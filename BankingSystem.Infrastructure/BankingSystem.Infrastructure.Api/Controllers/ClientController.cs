@@ -1,6 +1,5 @@
 ﻿using BankingSystem.Application.Services.Dto;
 using BankingSystem.Application.Services.Interfaces;
-using BankingSystem.ContextDomain.Entities;
 using BankingSystem.Infrastructure.Api.Middlewares.Details;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,13 +28,13 @@ public class ClientController : ControllerBase
     ///     HTTP 404 NotFound and error message if client is not found.
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
-    [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ClientDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("GetClientById/{clientId:guid}")]
-    public async Task<ActionResult<Client>> GetClientById(Guid clientId)
+    public async Task<ActionResult<ClientDto>> GetClient(Guid clientId)
     {
-        var client = await _clientService.GetClientByIdAsync(clientId);
+        var client = await _clientService.GetClientAsync(clientId);
         
         return Ok(client);
     }
@@ -45,15 +44,16 @@ public class ClientController : ControllerBase
     /// </summary>
     /// <param name="clientDto">employee data.</param>
     /// <returns>
-    ///     HTTP 200 Ok and client if client is adding.
+    ///     HTTP 200 Ok and client ID if client is adding.
     ///     HTTP 400 BadRequest and error message if client is not adding.
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
-    [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpPost("AddClient")]
-    public async Task<ActionResult<Client>> AddClient(ClientDto clientDto)
+    public async Task<ActionResult<Guid>> AddClient(ClientDto clientDto)
     {
         var client = await _clientService.AddClientAsync(clientDto);
         
@@ -66,21 +66,21 @@ public class ClientController : ControllerBase
     /// <param name="clientId">Client guid.</param>
     /// <param name="clientDto">Client data.</param>
     /// <returns>
-    ///     HTTP 200 Ok and updated client if client is updated.
+    ///     HTTP 200 Ok if client is updated.
     ///     HTTP 400 BadRequest and error message if client is not updated.
     ///     HTTP 404 NotFound and error message if client is not found.
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
-    [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpPut("UpdateClient/{clientId:guid}")]
-    public async Task<ActionResult<Client>> UpdateClient(Guid clientId, ClientDto clientDto)
+    public async Task<ActionResult> UpdateClient(Guid clientId, ClientDto clientDto)
     {
-        var client = await _clientService.UpdateClientAsync(clientId, clientDto);
+        await _clientService.UpdateClientAsync(clientId, clientDto);
         
-        return Ok(client);
+        return Ok();
     }
 
     /// <summary>

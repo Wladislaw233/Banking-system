@@ -29,13 +29,13 @@ public class EmployeeController : ControllerBase
     ///     HTTP 404 NotFound and error message if employee is not found.
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
-    [ProducesResponseType(typeof(Employee), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("GetEmployeeById/{employeeId:guid}")]
-    public async Task<ActionResult<Employee>> GetEmployeeById(Guid employeeId)
+    public async Task<ActionResult<EmployeeDto>> GetEmployee(Guid employeeId)
     {
-        var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
+        var employee = await _employeeService.GetEmployeeAsync(employeeId);
         
         return Ok(employee);
     }
@@ -65,19 +65,19 @@ public class EmployeeController : ControllerBase
     /// </summary>
     /// <param name="employeeDto">employee data.</param>
     /// <returns>
-    ///     HTTP 200 Ok and employee if employee is adding.
+    ///     HTTP 200 Ok and employee ID if employee is adding.
     ///     HTTP 400 BadRequest and error message if employee is not adding.
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
-    [ProducesResponseType(typeof(Employee), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpPost("AddEmployee")]
-    public async Task<ActionResult<Employee>> AddEmployee(EmployeeDto employeeDto)
+    public async Task<ActionResult<Guid>> AddEmployee(EmployeeDto employeeDto)
     {
-        var employee = await _employeeService.AddEmployeeAsync(employeeDto);
+        var employeeId = await _employeeService.AddEmployeeAsync(employeeDto);
         
-        return Ok(employee);
+        return Ok(employeeId);
     }
 
     /// <summary>
@@ -86,20 +86,20 @@ public class EmployeeController : ControllerBase
     /// <param name="employeeId">Employee guid.</param>
     /// <param name="employeeDto">Employee data.</param>
     /// <returns>
-    ///     HTTP 200 Ok and updated employee if employee is updated.
+    ///     HTTP 200 Ok if employee is updated.
     ///     HTTP 400 BadRequest and error message if employee is not updated.
     ///     HTTP 404 NotFound and error message if employee is not found.
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
-    [ProducesResponseType(typeof(Employee), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpPut("UpdateEmployee/{employeeId:guid}")]
-    public async Task<ActionResult<Employee>> UpdateEmployee(Guid employeeId, EmployeeDto employeeDto)
+    public async Task<ActionResult> UpdateEmployee(Guid employeeId, EmployeeDto employeeDto)
     {
-        var employee = await _employeeService.UpdateEmployeeAsync(employeeId, employeeDto);
+        await _employeeService.UpdateEmployeeAsync(employeeId, employeeDto);
         
-        return Ok(employee);
+        return Ok();
     }
 }

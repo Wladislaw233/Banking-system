@@ -10,24 +10,6 @@ public class Client : Person
     
     public string Address { get; set; }
     
-    public static Client? CopyClient(Client? client)
-    {
-        if (client is null)
-            return null;
-        return new Client()
-            {
-                ClientId = Guid.NewGuid(),
-                FirstName = client.FirstName, 
-                LastName = client.LastName, 
-                DateOfBirth = client.DateOfBirth, 
-                Age = client.Age, 
-                PhoneNumber = client.PhoneNumber, 
-                Email = client.Email, 
-                Address = client.Address,
-                Bonus = client.Bonus
-            };
-    }
-
     public override bool Equals(object? obj)
     {
         if (obj == null || !(obj is Client))

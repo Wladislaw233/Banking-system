@@ -22,14 +22,12 @@ public class Account
         var account = (Account)obj;
 
         return account.CurrencyId.Equals(CurrencyId) &&
-               account.Amount == Amount &&
                account.ClientId.Equals(ClientId);
     }
 
     public override int GetHashCode()
     {
         var hash = 14;
-        hash = hash * 17 + Amount.GetHashCode();
         hash = hash * 17 + ClientId.GetHashCode();
         hash = hash * 17 + CurrencyId.GetHashCode();
         

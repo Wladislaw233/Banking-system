@@ -13,6 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
@@ -20,6 +21,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\BankingSystem.Application\BankingSystem.Application.Services\BankingSystem.Application.Services.csproj" />
       <ProjectReference Include="..\..\BankingSystem.Context\BankingSystem.Context.Domain\BankingSystem.Context.Domain.csproj" />
+
     </ItemGroup>
 
 

@@ -33,7 +33,6 @@ public class ExceptionHandlerMiddleware
         {
             ArgumentException => HttpStatusCode.BadRequest,
             ValueNotFoundException => HttpStatusCode.NotFound,
-            PropertyValidationException => HttpStatusCode.BadRequest,
             _ => HttpStatusCode.InternalServerError
         };
 

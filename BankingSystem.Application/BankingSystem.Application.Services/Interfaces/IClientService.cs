@@ -5,11 +5,11 @@ namespace BankingSystem.Application.Services.Interfaces;
 
 public interface IClientService
 {
-    public Task<Client> AddClientAsync(ClientDto clientDto);
+    public Task<Guid> AddClientAsync(ClientDto clientDto);
 
-    public Task<Client> UpdateClientAsync(Guid clientId, ClientDto newClientDto);
+    public Task UpdateClientAsync(Guid clientId, ClientDto newClientDto);
 
     public Task DeleteClientAsync(Guid client);
 
-    public Task<Client> GetClientByIdAsync(Guid clientId);
+    public Task<ClientDto> GetClientAsync(Guid clientId);
 }

@@ -1,4 +1,5 @@
-﻿using BankingSystem.Application.Services.Dto;
+﻿using AutoMapper;
+using BankingSystem.Application.Services.Dto;
 using BankingSystem.Application.Services.Interfaces;
 using BankingSystem.ContextDomain.Entities;
 using BankingSystem.ContextDomain.Exceptions;
@@ -10,42 +11,44 @@ namespace BankingSystem.Application.Services.Services;
 public class ClientService : IClientService
 {
     private readonly BankingSystemDbContext _bankingSystemDbContext;
+    private readonly IMapper _mapper;
     private Currency? _defaultCurrency;
 
-    public ClientService(BankingSystemDbContext bankingSystemDbContext)
+    public ClientService(BankingSystemDbContext bankingSystemDbContext, IMapper mapper)
     {
         _bankingSystemDbContext = bankingSystemDbContext;
+        _mapper = mapper;
     }
 
-    public async Task<Client> AddClientAsync(ClientDto clientDto)
+    public async Task<Guid> AddClientAsync(ClientDto clientDto)
     {
-        var client = MapDtoToClient(clientDto);
+        var client = _mapper.Map<Client>(clientDto);
 
-        await ValidateClientAsync(client);
+        if (await ClientContainsInDatabase(client))
+            throw new ArgumentException("Client with such data already exists in the banking system.",
+                nameof(clientDto));
 
         _defaultCurrency ??= await GetDefaultCurrencyAsync();
 
-        var defaultAccount = CreateAccountAsync(client, _defaultCurrency);
+        var defaultAccount = CreateAccount(client, _defaultCurrency);
         
         await _bankingSystemDbContext.Clients.AddAsync(client);
         await _bankingSystemDbContext.Accounts.AddAsync(defaultAccount);
 
         await _bankingSystemDbContext.SaveChangesAsync();
 
-        return client;
+        return client.ClientId;
     }
 
-    public async Task<Client> UpdateClientAsync(Guid clientId, ClientDto newClientDto)
+    public async Task UpdateClientAsync(Guid clientId, ClientDto newClientDto)
     {
         var client = await GetClientByIdAsync(clientId);
 
-        client = MapDtoToClient(newClientDto, client);
-
-        await ValidateClientAsync(client, true);
-
+        var clientTuple = new Tuple<ClientDto, Guid>(newClientDto, clientId);
+        
+        _mapper.Map(clientTuple, client);
+        
         await _bankingSystemDbContext.SaveChangesAsync();
-
-        return client;
     }
 
     public async Task DeleteClientAsync(Guid clientId)
@@ -61,7 +64,12 @@ public class ClientService : IClientService
         await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task<Client> GetClientByIdAsync(Guid clientId)
+    public async Task<ClientDto> GetClientAsync(Guid clientId)
+    {
+        var client = await GetClientByIdAsync(clientId);
+        return _mapper.Map<ClientDto>(client);
+    }
+    private async Task<Client> GetClientByIdAsync(Guid clientId)
     {
         var client =
             await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
@@ -77,13 +85,22 @@ public class ClientService : IClientService
         var currency =
             await _bankingSystemDbContext.Currencies.SingleOrDefaultAsync(currency => currency.Code == "USD");
 
-        if (currency == null)
-            throw new ValueNotFoundException("Default currency USD not found.");
+        if (currency != null) return currency;
+        
+        currency = new Currency
+        {
+            Code = "USD",
+            Name = "United States dollar",
+            ExchangeRate = new decimal(1),
+            CurrencyId = Guid.NewGuid()
+        };
+        await _bankingSystemDbContext.Currencies.AddAsync(currency);
+        await _bankingSystemDbContext.SaveChangesAsync();
 
         return currency;
     }
 
-    private static Account CreateAccountAsync(Client client, Currency currency, decimal amount = 0)
+    private static Account CreateAccount(Client client, Currency currency, decimal amount = 0)
     {
         return new Account
         {
@@ -96,46 +113,6 @@ public class ClientService : IClientService
         };
     }
     
-    private async Task ValidateClientAsync(Client client, bool itUpdate = false)
-    {
-        /*if (!itUpdate 
-            && (await _bankingSystemDbContext.Clients.AnyAsync(c => c.ClientId.Equals(client.ClientId))
-            || await ClientContainsInDatabase(client)))
-            throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
-
-        if (string.IsNullOrWhiteSpace(client.FirstName))
-            throw new PropertyValidationException("Client first name not specified!", nameof(client.FirstName),
-                nameof(Client));
-
-        if (string.IsNullOrWhiteSpace(client.LastName))
-            throw new PropertyValidationException("The client last name not specified!", nameof(client.LastName),
-                nameof(Client));
-
-        if (string.IsNullOrWhiteSpace(client.PhoneNumber))
-            throw new PropertyValidationException("Client number not specified!", nameof(client.PhoneNumber),
-                nameof(Client));
-
-        if (string.IsNullOrWhiteSpace(client.Email))
-            throw new PropertyValidationException("Client e-mail not specified!", nameof(client.Email), nameof(Client));
-
-        if (string.IsNullOrWhiteSpace(client.Address))
-            throw new PropertyValidationException("Client address not specified!", nameof(client.Address),
-                nameof(Client));
-
-        if (client.DateOfBirth > DateTime.Now || client.DateOfBirth.Equals(DateTime.MinValue) ||
-            client.DateOfBirth.Equals(DateTime.MaxValue))
-            throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
-                nameof(Client));*/
-
-        /*var age = 0;//TestDataGenerator.CalculateAge(client.DateOfBirth);
-        
-        if (age < 18)
-            throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
-                nameof(Client));
-
-        if (age != client.Age || client.Age <= 0) client.Age = age;*/
-    }
-
     private async Task<bool> ClientContainsInDatabase(Client client)
     {
         return await _bankingSystemDbContext.Clients.AnyAsync(c => c.FirstName == client.FirstName 
@@ -144,22 +121,5 @@ public class ClientService : IClientService
                                                                    && c.Address == client.Address
                                                                    && c.Email == client.Email
                                                                    && c.DateOfBirth.Equals(client.DateOfBirth));
-    }
-    
-    private static Client MapDtoToClient(ClientDto clientDto, Client? client = null)
-    {
-        var mappedClient = client ?? new Client();
-
-        mappedClient.ClientId = client is not null ? mappedClient.ClientId : Guid.NewGuid();
-        mappedClient.FirstName = clientDto.FirstName;
-        mappedClient.LastName = clientDto.LastName;
-        mappedClient.DateOfBirth = clientDto.DateOfBirth.ToUniversalTime();
-        mappedClient.Age = clientDto.Age;
-        mappedClient.Address = clientDto.Address;
-        mappedClient.Bonus = clientDto.Bonus;
-        mappedClient.Email = clientDto.Email;
-        mappedClient.PhoneNumber = clientDto.PhoneNumber;
-
-        return mappedClient;
     }
 }

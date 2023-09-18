@@ -15,47 +15,7 @@ public class Employee : Person
     public string PhoneNumber { get; set; }
     
     public bool IsOwner { get; set; }
-
-    public static explicit operator Employee(Client client)
-    {
-        return new Employee
-        {
-            EmployeeId = Guid.NewGuid(),
-            FirstName = client.FirstName,
-            LastName = client.LastName,
-            DateOfBirth = client.DateOfBirth,
-            Age = client.Age,
-            Contract = client.FirstName + " " + client.LastName + ", дата рождения: " + client.DateOfBirth,
-            Salary = 0,
-            Address = client.Address,
-            Email = client.Email,
-            PhoneNumber = client.PhoneNumber,
-            Bonus = client.Bonus
-        };
-    }
-
-    public static Employee? CopyEmployee(Employee? employee)
-    {
-        if (employee is null)
-            return null;
-        
-        return new Employee
-        {
-            EmployeeId = Guid.NewGuid(),
-            FirstName = employee.FirstName,
-            LastName = employee.LastName,
-            DateOfBirth = employee.DateOfBirth,
-            Age = employee.Age,
-            Contract = employee.Contract,
-            Salary = employee.Salary,
-            Address = employee.Address,
-            Email = employee.Email,
-            PhoneNumber = employee.PhoneNumber,
-            Bonus = employee.Bonus,
-            IsOwner = employee.IsOwner
-        };
-    }
-
+    
     public override bool Equals(object? obj)
     {
         if (obj == null || !(obj is Employee))

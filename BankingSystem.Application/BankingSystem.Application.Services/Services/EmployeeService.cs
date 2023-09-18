@@ -1,4 +1,5 @@
-﻿using BankingSystem.Application.Services.Interfaces;
+﻿using AutoMapper;
+using BankingSystem.Application.Services.Interfaces;
 using BankingSystem.ContextDomain.Entities;
 using BankingSystem.ContextDomain.Exceptions;
 using BankingSystem.Infrastructure.Data.Context;
@@ -10,38 +11,38 @@ namespace BankingSystem.Application.Services.Services;
 public class EmployeeService : IEmployeeService
 {
     private readonly BankingSystemDbContext _bankingSystemDbContext;
+    private readonly IMapper _mapper;
 
-    public EmployeeService(BankingSystemDbContext bankingSystemDbContext)
+    public EmployeeService(BankingSystemDbContext bankingSystemDbContext, IMapper mapper)
     {
         _bankingSystemDbContext = bankingSystemDbContext;
+        _mapper = mapper;
     }
 
-    public async Task<Employee> AddEmployeeAsync(EmployeeDto employeeDto)
+    public async Task<Guid> AddEmployeeAsync(EmployeeDto employeeDto)
     {
-        var employee = MapDtoToEmployee(employeeDto);
+        var employee = _mapper.Map<Employee>(employeeDto);
 
-        await ValidateEmployeeAsync(employee);
-
+        if (await EmployeeContainsInDatabase(employee))
+            throw new ArgumentException("Employee with such data already exists in the banking system.",
+                nameof(employeeDto));
+        
         await _bankingSystemDbContext.Employees.AddAsync(employee);
 
         await _bankingSystemDbContext.SaveChangesAsync();
 
-        return employee;
+        return employee.EmployeeId;
     }
 
-    public async Task<Employee> UpdateEmployeeAsync(Guid employeeId, EmployeeDto newEmployeeDto)
+    public async Task UpdateEmployeeAsync(Guid employeeId, EmployeeDto newEmployeeDto)
     {
         var employee = await GetEmployeeByIdAsync(employeeId);
 
-        employee = MapDtoToEmployee(newEmployeeDto, employee);
-
-        await ValidateEmployeeAsync(employee, true);
-
-        _bankingSystemDbContext.Employees.Update(employee);
-
+        var employeeTuple = new Tuple<EmployeeDto, Guid>(newEmployeeDto, employeeId);
+        
+        _mapper.Map(employeeTuple, employee);
+        
         await _bankingSystemDbContext.SaveChangesAsync();
-
-        return employee;
     }
 
     public async Task DeleteEmployeeAsync(Guid employeeId)
@@ -53,55 +54,12 @@ public class EmployeeService : IEmployeeService
         await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    private async Task ValidateEmployeeAsync(Employee employee, bool isUpdate = false)
+    public async Task<EmployeeDto> GetEmployeeAsync(Guid employeeId)
     {
-        /*if (!isUpdate &&
-            (await _bankingSystemDbContext.Employees.AnyAsync(e => e.EmployeeId.Equals(employee.EmployeeId)) ||
-             await EmployeeContainsInDatabase(employee)))
-            throw new ArgumentException("This employee has already been added to the banking system!",
-                nameof(employee));
-
-        if (string.IsNullOrWhiteSpace(employee.FirstName))
-            throw new PropertyValidationException("The employee first name is not specified!",
-                nameof(employee.FirstName), nameof(Employee));
-
-        if (string.IsNullOrWhiteSpace(employee.LastName))
-            throw new PropertyValidationException("The employee last name is not specified!", nameof(employee.LastName),
-                nameof(Employee));
-
-        if (string.IsNullOrWhiteSpace(employee.PhoneNumber))
-            throw new PropertyValidationException("The employee phone number is not specified!",
-                nameof(employee.PhoneNumber), nameof(Employee));
-
-        if (string.IsNullOrWhiteSpace(employee.Email))
-            throw new PropertyValidationException("The employee e-mail is not specified!", nameof(employee.Email),
-                nameof(Employee));
-
-        if (string.IsNullOrWhiteSpace(employee.Address))
-            throw new PropertyValidationException("The employee address is not specified!", nameof(employee.Address),
-                nameof(Employee));
-
-        if (employee.Salary == 0)
-            throw new PropertyValidationException("The employee salary is not specified!", nameof(employee.Salary),
-                nameof(Employee));
-
-        if (string.IsNullOrWhiteSpace(employee.Contract))
-            employee.Contract = $"{employee.FirstName} {employee.LastName}, date of birth: {employee.DateOfBirth}";
-
-        if (employee.DateOfBirth > DateTime.Now || employee.DateOfBirth == DateTime.MinValue ||
-            employee.DateOfBirth == DateTime.MaxValue)
-            throw new PropertyValidationException("The employee's date of birth is incorrect!",
-                nameof(employee.DateOfBirth), nameof(Employee));
-
-        var age = await Task.Run(() => TestDataGenerator.CalculateAge(employee.DateOfBirth));
-
-        if (age < 18)
-            throw new PropertyValidationException("Employee is under 18 years old!", nameof(employee.Age),
-                nameof(Employee));
-
-        if (age != employee.Age || employee.Age <= 0) employee.Age = age;*/
+        var employee = await GetEmployeeByIdAsync(employeeId);
+        return _mapper.Map<EmployeeDto>(employee);
     }
-
+    
     private async Task<bool> EmployeeContainsInDatabase(Employee employee)
     {
         return await _bankingSystemDbContext.Employees.AnyAsync(e => e.FirstName == employee.FirstName 
@@ -112,7 +70,7 @@ public class EmployeeService : IEmployeeService
                                                                    && e.DateOfBirth.Equals(employee.DateOfBirth));
     }
     
-    public async Task<Employee> GetEmployeeByIdAsync(Guid employeeId)
+    private async Task<Employee> GetEmployeeByIdAsync(Guid employeeId)
     {
         var employee = await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
             employee.EmployeeId.Equals(employeeId));
@@ -121,25 +79,5 @@ public class EmployeeService : IEmployeeService
             throw new ValueNotFoundException($"The employee with identifier {employeeId} does not exist!");
 
         return employee;
-    }
-
-    private static Employee MapDtoToEmployee(EmployeeDto employeeDto, Employee? employee = null)
-    {
-        var mappedEmployee = employee ?? new Employee();
-
-        mappedEmployee.EmployeeId = employee is not null ? mappedEmployee.EmployeeId : Guid.NewGuid();
-        mappedEmployee.FirstName = employeeDto.FirstName;
-        mappedEmployee.LastName = employeeDto.LastName;
-        mappedEmployee.DateOfBirth = employeeDto.DateOfBirth.ToUniversalTime();
-        mappedEmployee.Age = employeeDto.Age;
-        mappedEmployee.Address = employeeDto.Address;
-        mappedEmployee.Bonus = employeeDto.Bonus;
-        mappedEmployee.Email = employeeDto.Email;
-        mappedEmployee.PhoneNumber = employeeDto.PhoneNumber;
-        mappedEmployee.Salary = employeeDto.Salary;
-        mappedEmployee.Contract = employeeDto.Contract;
-        mappedEmployee.IsOwner = employeeDto.IsOwner;
-
-        return mappedEmployee;
     }
 }
