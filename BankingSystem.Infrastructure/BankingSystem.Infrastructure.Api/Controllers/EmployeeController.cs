@@ -32,7 +32,7 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-    [HttpGet("GetEmployeeById/{employeeId:guid}")]
+    [HttpGet("GetEmployee/{employeeId:guid}")]
     public async Task<ActionResult<EmployeeDto>> GetEmployee(Guid employeeId)
     {
         var employee = await _employeeService.GetEmployeeAsync(employeeId);

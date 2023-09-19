@@ -31,7 +31,7 @@ public class ClientController : ControllerBase
     [ProducesResponseType(typeof(ClientDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-    [HttpGet("GetClientById/{clientId:guid}")]
+    [HttpGet("GetClient/{clientId:guid}")]
     public async Task<ActionResult<ClientDto>> GetClient(Guid clientId)
     {
         var client = await _clientService.GetClientAsync(clientId);
