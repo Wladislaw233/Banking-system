@@ -2,6 +2,9 @@
 
 namespace BankingSystem.Application.Services.Dto;
 
+/// <summary>
+///     Person data transfer model for API.
+/// </summary>
 public class PersonDto
 {
     /// <summary>

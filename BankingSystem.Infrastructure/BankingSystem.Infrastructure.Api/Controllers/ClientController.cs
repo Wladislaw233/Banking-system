@@ -49,8 +49,8 @@ public class ClientController : ControllerBase
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
     [HttpPost("AddClient")]
     public async Task<ActionResult<Guid>> AddClient(ClientDto clientDto)
