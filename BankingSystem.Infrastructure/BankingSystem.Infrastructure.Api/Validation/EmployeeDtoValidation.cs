@@ -16,11 +16,12 @@ public class EmployeeDtoValidation : AbstractValidator<EmployeeDto>
         RuleFor(employeeDto => employeeDto.DateOfBirth).NotEmpty().NotNull()
             .WithMessage("Employee date of birth is not specified!");
         
-        RuleFor(employeeDto => employeeDto.DateOfBirth).Must(AgeValidator.Over18YearsOld)
+        RuleFor(employeeDto => employeeDto.DateOfBirth)
+            .Must(dateOfBirth => AgeValidator.CalculateAge(dateOfBirth) > 17)
             .WithMessage("the employee must be over 18 years old.");
 
         RuleFor(employeeDto => employeeDto.Age)
-            .Must((employeeDto, _) => AgeValidator.ValidateAge(employeeDto.DateOfBirth, employeeDto.Age))
+            .Must((clientDto, age) => age == AgeValidator.CalculateAge(clientDto.DateOfBirth))
             .WithMessage("Employee age is incorrect.");
 
         RuleFor(employeeDto => employeeDto.PhoneNumber).NotEmpty().NotNull()

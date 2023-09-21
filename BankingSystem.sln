@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Application.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Infrastructure.Api", "BankingSystem.Infrastructure\BankingSystem.Infrastructure.Api\BankingSystem.Infrastructure.Api.csproj", "{B6280459-2140-4A8C-99F4-C0705D70B783}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BankingSystem.Context.Tests", "BankingSystem.Context.Tests", "{F5FF0815-2D8A-4CDC-A0DD-35326CB2BE8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Context.Tests.Validation", "BankingSystem.Context\BankingSystem.Context.Tests\BankingSystem.Context.Tests.Validation\BankingSystem.Context.Tests.Validation.csproj", "{07B9B477-2E54-45CB-B67D-051BE71A0FB5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,8 @@ Global
 		{8E2C187C-D72F-40A1-B6FA-1BCEDCFBCDE4} = {D5723FB7-52B5-41AA-B8EE-1F51D55C4670}
 		{EB56741C-3B5C-48DA-AE5B-D1970723479C} = {7609D09A-E2D6-43CF-BAC9-1AA2F405E1D6}
 		{B6280459-2140-4A8C-99F4-C0705D70B783} = {D5723FB7-52B5-41AA-B8EE-1F51D55C4670}
+		{F5FF0815-2D8A-4CDC-A0DD-35326CB2BE8E} = {D4500D59-DDFF-462C-82DA-516DEADC322B}
+		{07B9B477-2E54-45CB-B67D-051BE71A0FB5} = {F5FF0815-2D8A-4CDC-A0DD-35326CB2BE8E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7E5C7129-33C0-4BF7-A583-D29E554FA8CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -42,5 +48,9 @@ Global
 		{B6280459-2140-4A8C-99F4-C0705D70B783}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6280459-2140-4A8C-99F4-C0705D70B783}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6280459-2140-4A8C-99F4-C0705D70B783}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B9B477-2E54-45CB-B67D-051BE71A0FB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B9B477-2E54-45CB-B67D-051BE71A0FB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B9B477-2E54-45CB-B67D-051BE71A0FB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B9B477-2E54-45CB-B67D-051BE71A0FB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
