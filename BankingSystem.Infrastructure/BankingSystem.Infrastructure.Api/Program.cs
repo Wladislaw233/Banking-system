@@ -1,7 +1,5 @@
 using System.Reflection;
-using BankingSystem.Application.Services.Mapping;
 using BankingSystem.Application.Services.Services;
-using BankingSystem.Infrastructure.Api;
 using BankingSystem.Infrastructure.Api.Middlewares;
 using BankingSystem.Infrastructure.Api.Validation;
 using BankingSystem.Infrastructure.Data.Context;
@@ -20,8 +18,6 @@ builder.Services.AddBankServices();
 builder.Services.AddValidation();
 
 builder.Services.AddRepositories();
-
-builder.Services.AddMapping();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

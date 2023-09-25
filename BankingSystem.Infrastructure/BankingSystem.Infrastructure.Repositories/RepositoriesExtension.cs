@@ -9,6 +9,9 @@ public static class RepositoriesExtension
 {
     public static void AddRepositories(this IServiceCollection services)
     {
+        if (services == null)
+            throw new ArgumentNullException(nameof(services));
+        
         services.AddAutoMapper(typeof(MappingClientProfile));
         services.AddAutoMapper(typeof(MappingAccountProfile));
         services.AddAutoMapper(typeof(MappingCurrencyProfile));

@@ -1,5 +1,4 @@
-﻿using BankingSystem.ContextDomain.Entities;
-using BankingSystemServices.Models.DTO;
+﻿using BankingSystemServices.Models.DTO;
 
 namespace BankingSystem.Application.Services.Interfaces;
 
