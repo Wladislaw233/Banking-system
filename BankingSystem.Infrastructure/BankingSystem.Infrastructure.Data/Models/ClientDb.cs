@@ -27,6 +27,4 @@ public class ClientDb : PersonDb
     [Required]
     [Column("address", Order = 8)]
     public string Address { get; set; }
-    
-    public ICollection<AccountDb> ClientAccounts { get; set; }
 }

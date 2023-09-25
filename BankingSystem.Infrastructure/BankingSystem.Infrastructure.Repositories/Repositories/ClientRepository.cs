@@ -50,11 +50,14 @@ public class ClientRepository : IClientRepository
 
     public async Task DeleteClientAsync(Guid clientId)
     {
-        var bankClient = await GetClientByIdAsync(clientId);
+        var clientDb = await GetClientByIdAsync(clientId);
+
+        var clientAccountsDb = await _bankingSystemDbContext.Accounts
+            .Where(account => account.ClientId.Equals(clientDb.ClientId)).ToListAsync();
         
-        _bankingSystemDbContext.Accounts.RemoveRange(bankClient.ClientAccounts);
+        _bankingSystemDbContext.Accounts.RemoveRange(clientAccountsDb);
         
-        _bankingSystemDbContext.Clients.Remove(bankClient);
+        _bankingSystemDbContext.Clients.Remove(clientDb);
 
         await _bankingSystemDbContext.SaveChangesAsync();
     }
