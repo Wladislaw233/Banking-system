@@ -5,6 +5,7 @@ using BankingSystem.Infrastructure.Api;
 using BankingSystem.Infrastructure.Api.Middlewares;
 using BankingSystem.Infrastructure.Api.Validation;
 using BankingSystem.Infrastructure.Data.Context;
+using BankingSystem.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,9 @@ builder.Services.AddBankingSystemDbContext();
 
 builder.Services.AddBankServices();
 
-builder.Services.AddHostedService<MyHostedService>();
 builder.Services.AddValidation();
+
+builder.Services.AddRepositories();
 
 builder.Services.AddMapping();
 

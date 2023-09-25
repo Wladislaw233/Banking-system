@@ -1,16 +1,17 @@
 ﻿using BankingSystem.ContextDomain.Entities;
+using BankingSystem.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankingSystem.Infrastructure.Data.Context;
 
 public class BankingSystemDbContext : DbContext
 {
-    public DbSet<Client> Clients { get; init; }
-    public DbSet<Employee> Employees { get; init; }
-    public DbSet<Account> Accounts { get; init; }
-    public DbSet<Currency> Currencies { get; init; }
+    public DbSet<ClientDb> Clients { get; init; }
+    public DbSet<EmployeeDb> Employees { get; init; }
+    public DbSet<AccountDb> Accounts { get; init; }
+    public DbSet<CurrencyDb> Currencies { get; init; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    /*protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Client>().ToTable("clients");
         modelBuilder.Entity<Employee>().ToTable("employees");
@@ -196,7 +197,7 @@ public class BankingSystemDbContext : DbContext
                 .HasColumnOrder(3)
                 .HasPrecision(14, 2);
         });
-    }
+    }*/
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

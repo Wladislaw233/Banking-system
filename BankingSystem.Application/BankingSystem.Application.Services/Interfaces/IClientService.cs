@@ -1,5 +1,4 @@
 ﻿using BankingSystem.Application.Services.Dto;
-using BankingSystem.ContextDomain.Entities;
 
 namespace BankingSystem.Application.Services.Interfaces;
 

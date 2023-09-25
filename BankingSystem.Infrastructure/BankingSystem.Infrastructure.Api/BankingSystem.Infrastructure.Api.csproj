@@ -21,6 +21,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\BankingSystem.Application\BankingSystem.Application.Services\BankingSystem.Application.Services.csproj" />
       <ProjectReference Include="..\..\BankingSystem.Context\BankingSystem.Context.Domain\BankingSystem.Context.Domain.csproj" />
+      <ProjectReference Include="..\BankingSystem.Infrastructure.Repositories\BankingSystem.Infrastructure.Repositories.csproj" />
 
     </ItemGroup>
 
