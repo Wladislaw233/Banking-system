@@ -1,6 +1,7 @@
 using System.Reflection;
 using BankingSystem.Application.Services.Mapping;
 using BankingSystem.Application.Services.Services;
+using BankingSystem.Infrastructure.Api;
 using BankingSystem.Infrastructure.Api.Middlewares;
 using BankingSystem.Infrastructure.Api.Validation;
 using BankingSystem.Infrastructure.Data.Context;
@@ -15,6 +16,7 @@ builder.Services.AddBankingSystemDbContext();
 
 builder.Services.AddBankServices();
 
+builder.Services.AddHostedService<MyHostedService>();
 builder.Services.AddValidation();
 
 builder.Services.AddMapping();
