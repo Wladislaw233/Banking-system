@@ -1,4 +1,5 @@
-﻿using BankingSystem.Application.Services.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using BankingSystem.Application.Services.Interfaces;
 using BankingSystem.Infrastructure.Repositories.Mapping;
 using BankingSystem.Infrastructure.Repositories.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,7 @@ public static class RepositoriesExtension
     {
         if (services == null)
             throw new ArgumentNullException(nameof(services));
-        
+
         services.AddAutoMapper(typeof(MappingClientProfile));
         services.AddAutoMapper(typeof(MappingAccountProfile));
         services.AddAutoMapper(typeof(MappingCurrencyProfile));
