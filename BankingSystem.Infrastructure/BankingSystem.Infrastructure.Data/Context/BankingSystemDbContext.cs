@@ -202,7 +202,7 @@ public class BankingSystemDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(
-            "Host=localhost;" +
+            "Host=postgres_db;" +
             "Port=5432;" +
             "Database=banking_system;" +
             "Username=postgres;" +
